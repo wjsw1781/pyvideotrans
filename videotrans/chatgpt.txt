@@ -1,3 +1,0 @@
-Translate the following source text to {lang} language, Output translation directly without any additional text.
-Source Text: [TEXT]
-Translated Text:
