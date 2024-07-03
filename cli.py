@@ -36,7 +36,8 @@ def __init__():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='cli.ini and source mp4')
     parser.add_argument('-c', type=str, help='cli.ini file absolute filepath', default=os.path.join(os.getcwd(), 'cli.ini'))
-    parser.add_argument('-m', type=str, help='mp4 absolute filepath', default="")
+    parser.add_argument('-m', type=str, help='mp4 absolute filepath', default=r"C:\Users\Administrator\Desktop\aaa.mp4")
+    parser.add_argument('-f2t', type=str, help='mp4 absolute filepath', default=r"z2e")  #z2e e2z   分别代表中文转英文和英文转中文
     parser.add_argument('-cuda', action='store_true', help='Activates the cuda option')
 
     args = vars(parser.parse_args())
@@ -62,10 +63,17 @@ if __name__ == '__main__':
                 config.params[line[0]] = True
             else:
                 config.params[line[0]] = int(line[1]) if re.match(r'^\d+$', line[1]) else line[1]
-    if not config.params['source_language']:
-        config.params['source_language']='-'
-    if not config.params['target_language']:
-        config.params['target_language']='-'
+    
+    if args['f2t'] == 'z2e':
+        config.params['source_language'] = 'zh-cn'
+        config.params['target_language'] = 'en'
+    elif args['f2t'] == 'e2z':
+        config.params['source_language'] = 'en'
+        config.params['target_language'] = 'zh-cn'
+    else:
+        print("参数错误  必须指定 -f2t z2e 或 -f2t e2z    就是   中文转英文或  英文转中文   其他的语言后面再说目前就这两种做好就很牛逼了")
+        sys.exit()
+
     if not config.params.get('back_audio'):
         config.params['back_audio']='-'
     if args['cuda']:
@@ -212,6 +220,6 @@ if __name__ == '__main__':
         send_notification(config.transobj["zhixingwc"], f'"subtitles -> audio"')
         print(f'{"执行完成" if config.defaulelang == "zh" else "Succeed"} {video_task.targetdir_mp4}')
     except Exception as e:
-        send_notification(e, f'{video_task.obj["raw_basename"]}')
+        # send_notification(e, f'{video_task.obj["raw_basename"]}')
         # 捕获异常并重新绑定回溯信息
         traceback.print_exc()
